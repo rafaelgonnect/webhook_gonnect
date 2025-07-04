@@ -122,6 +122,11 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(iconPath);
 });
 
+// Fallback SPA para dashboard (React Router)
+app.get('/dashboard/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
+});
+
 /**
  * @swagger
  * /health:
