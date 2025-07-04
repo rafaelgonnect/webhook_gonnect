@@ -1,5 +1,12 @@
 const { useState, useEffect } = React;
 
+// axios global 401 handler
+autoset();
+function autoset(){
+  axios.interceptors.response.use(r=>r,err=>{if(err.response&&err.response.status===401){localStorage.removeItem('token');window.location.href='/dashboard';}return Promise.reject(err);});
+  const t=localStorage.getItem('token');if(t){axios.defaults.headers.common['Authorization']='Bearer '+t;}
+}
+
 function ChartCanvas({ id }) {
   return React.createElement('canvas', { id, style: { maxWidth: '600px', marginBottom: '30px' } });
 }
@@ -96,7 +103,7 @@ function DashboardWrapper(){
     if(authed){axios.defaults.headers.common['Authorization']='Bearer '+localStorage.getItem('token');}
   },[authed]);
   useEffect(()=>{
-    const respInterceptor=axios.interceptors.response.use(r=>r,err=>{if(err.response&&err.response.status===401){localStorage.removeItem('token');setA(false);}return Promise.reject(err);});
+    const respInterceptor=axios.interceptors.response.use(r=>r,err=>{if(err.response&&err.response.status===401){localStorage.removeItem('token');window.location.href='/dashboard';}return Promise.reject(err);});
     return ()=>axios.interceptors.response.eject(respInterceptor);
   },[authed]);
   if(!authed){return React.createElement(Login,{onLogin:()=>setA(true)});} 
