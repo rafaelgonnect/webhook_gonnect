@@ -1,6 +1,6 @@
 {
   "name": "webhook-gonnect-crm",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "Sistema webhook CRM para integração com Whaticket",
   "main": "server.js",
   "scripts": {
