@@ -10,6 +10,7 @@ const os = require('os');
 const { version } = require('./package.json');
 const contactsRoutes = require('./routes/contacts');
 const ticketsRoutes = require('./routes/tickets');
+const messagesRoutes = require('./routes/messages');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -73,13 +74,14 @@ app.get('/', (req, res) => {
   res.json({
     success: true,
     service: 'Gonnect CRM Webhook API',
-    version: '1.0.0',
+    version: version,
     endpoints: {
       webhook: 'POST /webhook',
       test: 'GET /webhook/test',
       health: 'GET /webhook/health',
       docs: 'GET /api-docs',
-      swagger: 'GET /swagger.json'
+      swagger: 'GET /swagger.json',
+      messages: `GET /messages`
     }
   });
 });
@@ -87,6 +89,7 @@ app.get('/', (req, res) => {
 app.use('/webhook', webhookRoutes);
 app.use('/contacts', contactsRoutes);
 app.use('/tickets', ticketsRoutes);
+app.use('/messages', messagesRoutes);
 
 /**
  * @swagger
@@ -227,6 +230,7 @@ async function startServer() {
     console.log(`   • Webhook:    ${BASE_URL}/webhook`);
     console.log(`   • Contacts:   ${BASE_URL}/contacts`);
     console.log(`   • Tickets:    ${BASE_URL}/tickets`);
+    console.log(`   • Messages:  ${BASE_URL}/messages`);
     
     app.listen(PORT, () => {
       console.log(`🌐 Servidor rodando na porta ${PORT}`);
