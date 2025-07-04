@@ -70,7 +70,7 @@ function Dashboard() {
               backgroundColor: ['#facc15','#60a5fa','#34d399']
             }]
           },
-          options: { plugins:{legend:{position:'bottom'}} }
+          options: { maintainAspectRatio: false, plugins:{legend:{position:'bottom'}} }
         });
       }
 
@@ -84,7 +84,8 @@ function Dashboard() {
           data: {
             labels: metrics.ticketsPerDay.map(i => i._id),
             datasets: [{ label:'Tickets/dia', data: metrics.ticketsPerDay.map(i => i.total), borderColor:'#60a5fa', fill:false }]
-          }
+          },
+          options: { maintainAspectRatio: false }
         });
       }
     }
@@ -102,7 +103,8 @@ function Dashboard() {
           data: {
             labels: tags.map(t => t.name),
             datasets: [{ data: tags.map(t => t.crmData?.usage?.totalApplications||0) }]
-          }
+          },
+          options: { maintainAspectRatio: false }
         });
       }
     }
