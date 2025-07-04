@@ -1,4 +1,5 @@
 import React from 'react';
+
 export default function Page404() {
   return (
     <div style={{background:'#222',color:'#fff',height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
