@@ -101,11 +101,11 @@ app.get('/', (req, res) => {
 });
 
 app.use('/webhook', webhookRoutes);
-app.use('/contacts', contactsRoutes);
-app.use('/tickets', ticketsRoutes);
-app.use('/messages', messagesRoutes);
-app.use('/stats', statsRoutes);
-app.use('/tags', tagsRoutes);
+app.use('/contacts', authJwt, contactsRoutes);
+app.use('/tickets', authJwt, ticketsRoutes);
+app.use('/messages', authJwt, messagesRoutes);
+app.use('/stats', authJwt, statsRoutes);
+app.use('/tags', authJwt, tagsRoutes);
 app.use('/auth', authRoutes);
 app.use('/dashboard', express.static(path.join(__dirname,'public','dashboard')));
 app.get('/dashboard', (req,res)=>{
