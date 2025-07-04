@@ -15,6 +15,8 @@ const statsRoutes = require('./routes/stats');
 const tagsRoutes = require('./routes/tags');
 const { scheduleLogRotation } = require('./services/logRotation');
 const authRoutes = require('./routes/auth');
+const AdminUser = require('./models/AdminUser');
+const bcrypt = require('bcryptjs');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -269,6 +271,9 @@ async function startServer() {
     console.log(`   • Stats:      ${BASE_URL}/stats`);
     console.log(`   • Tags:       ${BASE_URL}/tags`);
     
+    // Garantir admin
+    await ensureAdminExists();
+
     app.listen(PORT, () => {
       console.log(`🌐 Servidor rodando na porta ${PORT}`);
       console.log(`🎯 Webhook: http://localhost:${PORT}/webhook`);
@@ -279,6 +284,23 @@ async function startServer() {
   } catch (error) {
     console.error('❌ Erro ao iniciar servidor:', error);
     process.exit(1);
+  }
+}
+
+async function ensureAdminExists() {
+  try {
+    const count = await AdminUser.countDocuments();
+    if (count === 0) {
+      const username = process.env.ADMIN_USER || 'admin';
+      const password = process.env.ADMIN_PASS || 'admin123';
+      const hash = await bcrypt.hash(password, 10);
+      await AdminUser.create({ username, passwordHash: hash });
+      console.log('👑 Usuário administrador padrão criado:');
+      console.log(`   • username: ${username}`);
+      console.log(`   • password: ${password}`);
+    }
+  } catch (error) {
+    console.error('Erro ao garantir admin:', error);
   }
 }
 
