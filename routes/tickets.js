@@ -82,4 +82,32 @@ router.get('/:id', ticketController.getTicketById);
  */
 router.put('/:id/status', ticketController.updateTicketStatus);
 
+/**
+ * @swagger
+ * /tickets/{id}/message:
+ *   post:
+ *     tags: [Tickets]
+ *     summary: Enviar mensagem manual no ticket
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [content]
+ *             properties:
+ *               content:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Mensagem criada
+ */
+router.post('/:id/message', ticketController.createManualMessage);
+
 module.exports = router; 
