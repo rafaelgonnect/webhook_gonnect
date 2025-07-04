@@ -9,6 +9,7 @@ const net = require('net');
 const os = require('os');
 const { version } = require('./package.json');
 const contactsRoutes = require('./routes/contacts');
+const ticketsRoutes = require('./routes/tickets');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -85,6 +86,7 @@ app.get('/', (req, res) => {
 
 app.use('/webhook', webhookRoutes);
 app.use('/contacts', contactsRoutes);
+app.use('/tickets', ticketsRoutes);
 
 /**
  * @swagger
