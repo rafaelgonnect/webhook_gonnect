@@ -6,7 +6,7 @@ const swaggerOptions = {
     openapi: '3.0.0',
     info: {
       title: 'Gonnect CRM Webhook API',
-      version: '1.0.0',
+      version: '1.2.0',
       description: 'Sistema webhook para integração com Whaticket e gestão de CRM',
       contact: {
         name: 'Gonnect CRM',
