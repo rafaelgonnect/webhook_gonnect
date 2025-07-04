@@ -40,6 +40,7 @@ RUN git clone --depth 1 https://github.com/minimal-ui-kit/material-kit-react.git
     && cd frontend \
     && npm ci --legacy-peer-deps \
     && npm run build \
-    && cp -r dist ../public/dashboard \
+    && mkdir -p ../public/dashboard \
+    && cp -r dist/* ../public/dashboard/ \
     && cd .. \
     && rm -rf frontend 
