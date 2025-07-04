@@ -113,6 +113,15 @@ app.get('/dashboard', (req,res)=>{
 });
 app.use('/dashboard-api', authJwt, dashboardApiRoutes);
 
+// servir assets gerados do dashboard
+app.use('/assets', express.static(path.join(__dirname, 'public', 'dashboard', 'assets')));
+
+// favicon do dashboard (evita 404)
+app.get('/favicon.ico', (req, res) => {
+  const iconPath = path.join(__dirname, 'public', 'dashboard', 'favicon.ico');
+  res.sendFile(iconPath);
+});
+
 /**
  * @swagger
  * /health:
