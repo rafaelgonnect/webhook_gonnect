@@ -95,6 +95,10 @@ function DashboardWrapper(){
   useEffect(()=>{
     if(authed){axios.defaults.headers.common['Authorization']='Bearer '+localStorage.getItem('token');}
   },[authed]);
+  useEffect(()=>{
+    const respInterceptor=axios.interceptors.response.use(r=>r,err=>{if(err.response&&err.response.status===401){localStorage.removeItem('token');setA(false);}return Promise.reject(err);});
+    return ()=>axios.interceptors.response.eject(respInterceptor);
+  },[authed]);
   if(!authed){return React.createElement(Login,{onLogin:()=>setA(true)});} 
   return React.createElement(Dashboard);
 }
