@@ -7,6 +7,7 @@ const webhookRoutes = require('./routes/webhook');
 const { swaggerSpec, swaggerUi, swaggerUiOptions } = require('./config/swagger');
 const net = require('net');
 const os = require('os');
+const { version } = require('./package.json');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -208,7 +209,8 @@ async function runDiagnostics() {
 
 async function startServer() {
   try {
-    console.log('🚀 Iniciando servidor...');
+    console.log(`🛠️  Iniciando Webhook Gonnect CRM - Versão ${version}`);
+    console.log('📦 Build: inclui correções de ticketData case-insensitive e debug de payload');
     await connectDatabase();
     
     const { logger } = require('./utils/logger');
