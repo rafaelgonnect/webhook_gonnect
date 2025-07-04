@@ -1,5 +1,6 @@
 const Ticket = require('../models/Ticket');
 const Message = require('../models/Message');
+const { sendText } = require('../utils/whaticketApi');
 
 exports.listTickets = async (req, res) => {
   try {
@@ -84,6 +85,13 @@ exports.createManualMessage = async (req, res) => {
       }
     });
     await message.save();
+
+    // Enviar via Whaticket
+    try {
+      await sendText({ number: ticket.contactId.toString(), body: content, openTicket: 0 });
+    } catch (err) {
+      console.warn('Falha no envio externo, mensagem salva localmente.');
+    }
 
     res.status(201).json({ success: true, data: message });
   } catch (error) {
