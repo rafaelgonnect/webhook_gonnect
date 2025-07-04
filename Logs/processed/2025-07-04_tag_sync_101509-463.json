@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-07-04T13:15:09.463Z",
+  "action": "tag_sync",
+  "originalFile": "2025-07-04_tag_sync_101508-696.json",
+  "processedData": {
+    "contact": "6867d159276433a6f8ed0aa2",
+    "tags": [
+      "6867d3de276433a6f8ed0aa4"
+    ],
+    "event": "6867d3dd8ae0663076f5af4f",
+    "processed": "tag_sync"
+  },
+  "processingInfo": {
+    "processedAt": "2025-07-04T13:15:09.463Z",
+    "success": true
+  }
+}

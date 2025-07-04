@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-07-04T13:15:08.696Z",
+  "action": "tag_sync",
+  "payload": {
+    "action": "tag sync",
+    "companyid": 1,
+    "tags": {
+      "ticketid": 357,
+      "tags": [
+        {
+          "id": 1,
+          "name": "Lead Qualificado",
+          "color": "#28a745",
+          "kanban": 1,
+          "prioridade": 5,
+          "conversao": "high",
+          "companyid": 1,
+          "createdat": "2025-07-04T13:00:00.000Z",
+          "updatedat": "2025-07-04T13:00:00.000Z"
+        }
+      ]
+    },
+    "contact": {
+      "id": 4192,
+      "name": "Jo�o Silva",
+      "number": "5511989091838",
+      "email": "joao@teste.com"
+    }
+  },
+  "metadata": {
+    "source": "whaticket-webhook",
+    "version": "1.0.0",
+    "receivedAt": "2025-07-04T13:15:08.697Z"
+  }
+}

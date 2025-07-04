@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-07-04T13:06:34.443Z",
+  "action": "start",
+  "payload": {
+    "sender": "5511989091838",
+    "mensagem": "Ol�, preciso de ajuda",
+    "acao": "start",
+    "companyid": 1,
+    "ticketdata": {
+      "id": 357,
+      "status": "pending",
+      "uuid": "test-uuid-123",
+      "createdat": "2025-07-04T13:00:00.000Z",
+      "updatedat": "2025-07-04T13:00:00.000Z",
+      "contactid": 4192,
+      "whatsappid": 2,
+      "queueid": 1,
+      "companyid": 1,
+      "lastmessage": "Ol�, preciso de ajuda",
+      "contact": {
+        "id": 4192,
+        "name": "Jo�o Silva",
+        "number": "5511989091838",
+        "email": "joao@teste.com",
+        "active": true
+      }
+    }
+  },
+  "metadata": {
+    "source": "whaticket-webhook",
+    "version": "1.0.0",
+    "receivedAt": "2025-07-04T13:06:34.443Z"
+  }
+}

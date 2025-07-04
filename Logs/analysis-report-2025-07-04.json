@@ -1,0 +1,12 @@
+{
+  "date": "2025-07-04",
+  "totalEvents": 5,
+  "eventTypes": {
+    "start": 4,
+    "tag_sync": 1
+  },
+  "hourlyDistribution": {
+    "10": 5
+  },
+  "commonPatterns": []
+}

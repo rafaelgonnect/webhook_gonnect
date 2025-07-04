@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-07-04T13:04:37.183Z",
+  "action": "start",
+  "error": {
+    "message": "Cast to date failed for value \"Invalid Date\" (type Date) at path \"whaticketCreatedAt\"",
+    "stack": "CastError: Cast to date failed for value \"Invalid Date\" (type Date) at path \"whaticketCreatedAt\"\n    at SchemaDate.cast (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\schema\\date.js:377:11)\n    at SchemaType.applySetters (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\schemaType.js:1255:12)\n    at SchemaDate.castForQuery (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\schema\\date.js:416:19)\n    at castUpdateVal (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\helpers\\query\\castUpdate.js:628:19)\n    at walkUpdatePath (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\helpers\\query\\castUpdate.js:433:24)\n    at castUpdate (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\helpers\\query\\castUpdate.js:144:7)\n    at model.Query._castUpdate (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\query.js:4851:10)\n    at model.Query._findOneAndUpdate (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\query.js:3474:23)\n    at model.Query.exec (C:\\Users\\VAIO\\Documents\\Projetos\\webhook_gonnect\\node_modules\\mongoose\\lib\\query.js:4604:80)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+    "name": "CastError"
+  },
+  "payload": {
+    "sender": "5511989091838",
+    "mensagem": "Ol�, preciso de ajuda",
+    "acao": "start",
+    "companyid": 1,
+    "ticketdata": {
+      "id": 357,
+      "status": "pending",
+      "contact": {
+        "id": 4192,
+        "name": "Jo�o Silva",
+        "number": "5511989091838"
+      }
+    }
+  },
+  "errorInfo": {
+    "occurredAt": "2025-07-04T13:04:37.183Z",
+    "severity": "high"
+  }
+}

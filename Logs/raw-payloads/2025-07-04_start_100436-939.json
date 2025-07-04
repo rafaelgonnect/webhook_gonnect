@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-07-04T13:04:36.939Z",
+  "action": "start",
+  "payload": {
+    "sender": "5511989091838",
+    "mensagem": "Ol�, preciso de ajuda",
+    "acao": "start",
+    "companyid": 1,
+    "ticketdata": {
+      "id": 357,
+      "status": "pending",
+      "contact": {
+        "id": 4192,
+        "name": "Jo�o Silva",
+        "number": "5511989091838"
+      }
+    }
+  },
+  "metadata": {
+    "source": "whaticket-webhook",
+    "version": "1.0.0",
+    "receivedAt": "2025-07-04T13:04:36.940Z"
+  }
+}
