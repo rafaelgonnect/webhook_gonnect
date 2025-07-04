@@ -14,6 +14,7 @@ const messagesRoutes = require('./routes/messages');
 const statsRoutes = require('./routes/stats');
 const tagsRoutes = require('./routes/tags');
 const { scheduleLogRotation } = require('./services/logRotation');
+const authRoutes = require('./routes/auth');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -97,6 +98,7 @@ app.use('/tickets', ticketsRoutes);
 app.use('/messages', messagesRoutes);
 app.use('/stats', statsRoutes);
 app.use('/tags', tagsRoutes);
+app.use('/auth', authRoutes);
 
 /**
  * @swagger
