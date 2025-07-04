@@ -53,4 +53,6 @@ exports.updateTicketStatus = async (req, res) => {
     console.error('Erro ao atualizar status do ticket:', error);
     res.status(500).json({ success: false, error: 'Erro interno' });
   }
-}; 
+};
+
+module.exports = exports; 
