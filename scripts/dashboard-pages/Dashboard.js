@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -11,6 +12,7 @@ export default function Dashboard() {
   return (
     <div style={{padding:32}}>
       <h1>Dashboard</h1>
+      <p><Link to="/dashboard">Ir para Dashboard</Link></p>
       {stats ? (
         <pre>{JSON.stringify(stats, null, 2)}</pre>
       ) : (
