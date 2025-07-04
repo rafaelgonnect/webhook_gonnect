@@ -29,11 +29,18 @@ function Login({onLogin}){
 function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [error, setError] = useState(null);
+  const [health,setHealth]=useState(null);
+  const [tags,setTags]=useState(null);
 
   useEffect(() => {
     axios.get('/dashboard-api/metrics')
       .then(res => setMetrics(res.data.data))
       .catch(err => setError(err.message));
+  }, []);
+
+  useEffect(() => {
+    axios.get('/health/extended').then(r=>setHealth(r.data));
+    axios.get('/tags').then(r=>setTags(r.data.data));
   }, []);
 
   useEffect(() => {
@@ -66,14 +73,20 @@ function Dashboard() {
     }
   }, [metrics]);
 
+  useEffect(()=>{if(metrics&&tags){const ctx3=document.getElementById('chartTags');const labels=tags.map(t=>t.name);const dataVals=tags.map(t=>t.crmData?.usage?.totalApplications||0);new Chart(ctx3,{type:'pie',data:{labels,datasets:[{data:dataVals,backgroundColor:'#34d399'}]}});}},[tags,metrics]);
+
   if (error) return React.createElement('div', null, 'Erro: ' + error);
-  if (!metrics) return React.createElement('div', null, 'Carregando...');
+  if (!metrics||!health||!tags) return React.createElement('div',null,'Carregando...');
 
   return React.createElement('div', null, [
     React.createElement('h3', { key: 'h' }, 'Tickets por Status'),
     React.createElement(ChartCanvas, { key:'c1', id:'chartStatus' }),
     React.createElement('h3', { key:'h2' }, 'Tickets últimos 7 dias'),
-    React.createElement(ChartCanvas, { key:'c2', id:'chartTicketsDay' })
+    React.createElement(ChartCanvas, { key:'c2', id:'chartTicketsDay' }),
+    React.createElement('h3',{key:'hHealth'},'Saúde do Sistema'),
+    React.createElement('pre',{key:'pHealth'},JSON.stringify(health,null,2)),
+    React.createElement('h3',{key:'hTags'},'Distribuição de Tags'),
+    React.createElement(ChartCanvas,{key:'cTags',id:'chartTags'})
   ]);
 }
 
