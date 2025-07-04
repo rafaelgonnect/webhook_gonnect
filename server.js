@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const { connectDatabase } = require('./config/database-local');
 const webhookRoutes = require('./routes/webhook');
 const { swaggerSpec, swaggerUi, swaggerUiOptions } = require('./config/swagger');
+const net = require('net');
+const os = require('os');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -138,6 +140,72 @@ app.use((error, req, res, next) => {
   });
 });
 
+// Função para testar se a porta está realmente aberta
+function testPort(port, host = '127.0.0.1') {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    socket.setTimeout(2000);
+    socket.once('connect', () => {
+      socket.destroy();
+      resolve(true);
+    });
+    socket.once('timeout', () => {
+      socket.destroy();
+      resolve(false);
+    });
+    socket.once('error', () => {
+      resolve(false);
+    });
+    socket.connect(port, host);
+  });
+}
+
+// Função para obter IPs locais
+function getLocalIPs() {
+  const interfaces = os.networkInterfaces();
+  const ips = [];
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        ips.push(iface.address);
+      }
+    }
+  }
+  return ips;
+}
+
+// Diagnóstico ao iniciar o servidor
+async function runDiagnostics() {
+  const port = PORT;
+  const localTest = await testPort(port, '127.0.0.1');
+  const ips = getLocalIPs();
+  const results = [];
+
+  for (const ip of ips) {
+    // Testa cada IP local
+    // (em servidores cloud, pode não funcionar para IP público externo)
+    const ok = await testPort(port, ip);
+    results.push({ ip, ok });
+  }
+
+  console.log('\n=== Diagnóstico de Inicialização ===');
+  console.log(`Porta configurada: ${port}`);
+  console.log(`Acessível em localhost:${port}? ${localTest ? '✅ Sim' : '❌ Não'}`);
+  results.forEach(r => {
+    console.log(`Acessível em ${r.ip}:${port}? ${r.ok ? '✅ Sim' : '❌ Não'}`);
+  });
+  console.log('Testes HTTP recomendados:');
+  console.log(`  curl -i http://localhost:${port}/health`);
+  ips.forEach(ip => {
+    console.log(`  curl -i http://${ip}:${port}/health`);
+  });
+  console.log('Se não conseguir acessar externamente, verifique:');
+  console.log('- Variável de ambiente PORT');
+  console.log('- Regras de firewall do servidor');
+  console.log('- Configuração de proxy/rede do EasyPanel');
+  console.log('====================================\n');
+}
+
 async function startServer() {
   try {
     console.log('🚀 Iniciando servidor...');
@@ -149,6 +217,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🌐 Servidor rodando na porta ${PORT}`);
       console.log(`🎯 Webhook: http://localhost:${PORT}/webhook`);
+      runDiagnostics();
     });
   } catch (error) {
     console.error('❌ Erro ao iniciar servidor:', error);
