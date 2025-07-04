@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  webhook-gonnect:
+    build: .
+    container_name: webhook-gonnect-crm
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo:L3afarodnil@109.199.117.251:27017/webhook_gonnect?tls=false&authSource=admin
+    restart: unless-stopped
+    volumes:
+      - ./Logs:/app/Logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - webhook-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webhook.rule=Host(`api.gonnect.com.br`)"
+      - "traefik.http.routers.webhook.tls=true"
+      - "traefik.http.services.webhook.loadbalancer.server.port=3000"
+
+networks:
+  webhook-network:
+    driver: bridge 

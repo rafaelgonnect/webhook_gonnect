@@ -1,0 +1,36 @@
+{
+  "name": "webhook-gonnect-crm",
+  "description": "Sistema webhook CRM para integração com Whaticket",
+  "version": "1.0.0",
+  "type": "application",
+  "framework": "nodejs",
+  "port": 3000,
+  "buildCommand": "npm ci --only=production",
+  "startCommand": "npm start",
+  "environment": {
+    "NODE_ENV": "production",
+    "PORT": "3000",
+    "MONGODB_URI": "mongodb://mongo:L3afarodnil@109.199.117.251:27017/webhook_gonnect?tls=false&authSource=admin"
+  },
+  "domains": [
+    "api.gonnect.com.br"
+  ],
+  "ssl": true,
+  "healthCheck": {
+    "path": "/health",
+    "interval": 30,
+    "timeout": 10,
+    "retries": 3
+  },
+  "volumes": [
+    {
+      "source": "./Logs",
+      "target": "/app/Logs"
+    }
+  ],
+  "resources": {
+    "cpu": "0.5",
+    "memory": "512M"
+  },
+  "restartPolicy": "unless-stopped"
+} 
