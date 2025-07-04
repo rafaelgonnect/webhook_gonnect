@@ -122,9 +122,21 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(iconPath);
 });
 
-// Fallback SPA para dashboard (React Router)
-app.get('/dashboard/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
+// Custom 404 para dashboard (HTML simples)
+app.use('/dashboard', (req, res, next) => {
+  res.status(404).send(`
+    <html style='background:#222;color:#fff;font-family:sans-serif;'>
+      <head><title>Dashboard 404</title></head>
+      <body style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;'>
+        <h1 style='font-size:3em;'>404 - Dashboard Customizado</h1>
+        <p>Esta tela foi gerada pelo backend Express.<br>Se você está vendo isso, o build do dashboard não foi encontrado ou há erro de rota.</p>
+        <p style='color:#ff0;'>Verifique se <b>public/dashboard/index.html</b> existe e se o build foi copiado corretamente.</p>
+        <hr style='width:50%;border:1px solid #444;'>
+        <small>Gonnect CRM &mdash; build: <span id='build-date'></span></small>
+        <script>document.getElementById('build-date').textContent = new Date().toLocaleString()</script>
+      </body>
+    </html>
+  `);
 });
 
 /**
