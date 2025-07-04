@@ -1,6 +1,6 @@
 const Ticket = require('../models/Ticket');
 const Message = require('../models/Message');
-const { sendText } = require('../utils/whaticketApi');
+const { sendText, sendMedia } = require('../utils/whaticketApi');
 
 exports.listTickets = async (req, res) => {
   try {
@@ -96,6 +96,56 @@ exports.createManualMessage = async (req, res) => {
     res.status(201).json({ success: true, data: message });
   } catch (error) {
     console.error('Erro ao enviar mensagem manual:', error);
+    res.status(500).json({ success: false, error: 'Erro interno' });
+  }
+};
+
+exports.createManualMedia = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fileUrl, filename, caption } = req.body;
+    if (!fileUrl || !filename) {
+      return res.status(400).json({ success: false, error: 'fileUrl e filename são obrigatórios' });
+    }
+
+    const ticket = await Ticket.findById(id);
+    if (!ticket) return res.status(404).json({ success: false, error: 'Ticket não encontrado' });
+
+    // Criar mensagem local
+    const message = new Message({
+      sender: ticket.contactId,
+      ticketId: ticket.whaticketId,
+      action: 'media',
+      content: caption || filename,
+      companyId: ticket.companyId,
+      whatsappId: ticket.whatsappId,
+      fromMe: true,
+      queueId: ticket.queueId,
+      isGroup: ticket.isGroup,
+      media: {
+        filename,
+        backendUrl: fileUrl,
+        mediaType: 'document'
+      },
+      ticketSnapshot: {
+        status: ticket.status,
+        contactName: ticket.contact?.name,
+        contactNumber: ticket.contactId,
+        queueName: ticket.queue?.name,
+        userName: ticket.user?.name
+      }
+    });
+    await message.save();
+
+    try {
+      await sendMedia({ number: ticket.contactId.toString(), fileUrl, filename, caption, openTicket: 0 });
+    } catch (err) {
+      console.warn('Falha envio de mídia externo, mensagem salva.');
+    }
+
+    res.status(201).json({ success: true, data: message });
+  } catch (error) {
+    console.error('Erro ao enviar mídia manual:', error);
     res.status(500).json({ success: false, error: 'Erro interno' });
   }
 };

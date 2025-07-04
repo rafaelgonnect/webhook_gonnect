@@ -66,4 +66,25 @@ async function sendTextSimple({ number, body, cc = '55' }) {
   }
 }
 
-module.exports = { sendText, sendTextSimple }; 
+async function sendMedia({ number, fileUrl, filename, caption = '', openTicket = 0, queueId = 0 }) {
+  if (!BASE_URL || !TOKEN) return { disabled: true };
+  try {
+    const resp = await axios.post(
+      `${BASE_URL}/api/messages/send-media`,
+      { number, fileUrl, filename, caption, openticket: openTicket, queueid: queueId },
+      {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 20000
+      }
+    );
+    return resp.data;
+  } catch (error) {
+    console.error('Erro ao enviar mídia Whaticket:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+module.exports = { sendText, sendTextSimple, sendMedia }; 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ticketController = require('../controllers/ticketController');
+const tagsController = require('../controllers/tagsController');
 
 /**
  * @swagger
@@ -109,5 +110,63 @@ router.put('/:id/status', ticketController.updateTicketStatus);
  *         description: Mensagem criada
  */
 router.post('/:id/message', ticketController.createManualMessage);
+
+/**
+ * @swagger
+ * /tickets/{id}/media:
+ *   post:
+ *     tags: [Tickets]
+ *     summary: Enviar mídia manual no ticket
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [media]
+ *             properties:
+ *               media:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Mídia criada
+ */
+router.post('/:id/media', ticketController.createManualMedia);
+
+/**
+ * @swagger
+ * /tickets/{id}/tags:
+ *   post:
+ *     tags: [Tickets]
+ *     summary: Gerenciar tags do ticket
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [tags]
+ *             properties:
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Tags gerenciadas com sucesso
+ */
+router.post('/:id/tags', tagsController.manageTicketTags);
 
 module.exports = router; 

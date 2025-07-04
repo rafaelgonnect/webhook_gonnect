@@ -11,6 +11,9 @@ const { version } = require('./package.json');
 const contactsRoutes = require('./routes/contacts');
 const ticketsRoutes = require('./routes/tickets');
 const messagesRoutes = require('./routes/messages');
+const statsRoutes = require('./routes/stats');
+const tagsRoutes = require('./routes/tags');
+const { scheduleLogRotation } = require('./services/logRotation');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -81,7 +84,9 @@ app.get('/', (req, res) => {
       health: 'GET /webhook/health',
       docs: 'GET /api-docs',
       swagger: 'GET /swagger.json',
-      messages: `GET /messages`
+      messages: `GET /messages`,
+      stats: 'GET /stats',
+      tags: 'GET /tags'
     }
   });
 });
@@ -90,6 +95,8 @@ app.use('/webhook', webhookRoutes);
 app.use('/contacts', contactsRoutes);
 app.use('/tickets', ticketsRoutes);
 app.use('/messages', messagesRoutes);
+app.use('/stats', statsRoutes);
+app.use('/tags', tagsRoutes);
 
 /**
  * @swagger
@@ -130,6 +137,32 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime())
   });
+});
+
+// Health extended
+app.get('/health/extended', async (req, res) => {
+  try {
+    const Ticket = require('./models/Ticket');
+    const Message = require('./models/Message');
+    const Tag = require('./models/Tag').Tag;
+    const counts = await Promise.all([
+      Ticket.countDocuments(),
+      Message.countDocuments(),
+      Tag.countDocuments()
+    ]);
+    res.json({
+      status: 'ok',
+      mongoState: require('mongoose').connection.readyState,
+      totals: {
+        tickets: counts[0],
+        messages: counts[1],
+        tags: counts[2]
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', error: error.message });
+  }
 });
 
 // Error handling
@@ -231,12 +264,16 @@ async function startServer() {
     console.log(`   • Contacts:   ${BASE_URL}/contacts`);
     console.log(`   • Tickets:    ${BASE_URL}/tickets`);
     console.log(`   • Messages:  ${BASE_URL}/messages`);
+    console.log(`   • Stats:      ${BASE_URL}/stats`);
+    console.log(`   • Tags:       ${BASE_URL}/tags`);
     
     app.listen(PORT, () => {
       console.log(`🌐 Servidor rodando na porta ${PORT}`);
       console.log(`🎯 Webhook: http://localhost:${PORT}/webhook`);
       runDiagnostics();
     });
+
+    scheduleLogRotation();
   } catch (error) {
     console.error('❌ Erro ao iniciar servidor:', error);
     process.exit(1);

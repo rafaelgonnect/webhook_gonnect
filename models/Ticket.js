@@ -200,7 +200,13 @@ const TicketSchema = new mongoose.Schema({
   whaticketUpdatedAt: {
     type: Date,
     required: true
-  }
+  },
+
+  tags: {
+    type: [Number],
+    default: [],
+    index: true
+  },
 }, {
   timestamps: true,
   collection: 'tickets'
