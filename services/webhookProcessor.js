@@ -297,7 +297,7 @@ class WebhookProcessor {
    */
   async upsertTicket(payload, contact) {
     try {
-      const ticketData = payload.ticketdata;
+      const ticketData = payload.ticketdata || payload.ticketData;
       
       if (!ticketData) {
         throw new Error('Dados de ticket não encontrados no payload');
@@ -399,7 +399,7 @@ class WebhookProcessor {
         sender: payload.sender,
         ticketId: payload.chamadoid || ticket.whaticketId,
         action: 'media',
-        content: payload.ticketdata.lastmessage || 'Arquivo enviado',
+        content: (payload.ticketdata?.lastmessage || payload.ticketData?.lastmessage || 'Arquivo enviado'),
         companyId: payload.companyid,
         whatsappId: payload.defaultwhatsappid,
         fromMe: payload.fromme === true,
