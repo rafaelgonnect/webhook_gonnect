@@ -38,6 +38,8 @@ CMD ["npm", "start"]
 # Clonar e buildar dashboard
 RUN git clone --depth 1 https://github.com/minimal-ui-kit/material-kit-react.git frontend \
     && cd frontend \
+    # Copiar páginas customizadas
+    && cp -f /app/scripts/dashboard-pages/*.js src/pages/ \
     && npm ci --legacy-peer-deps \
     && npm run build \
     && mkdir -p /app/public/dashboard \
