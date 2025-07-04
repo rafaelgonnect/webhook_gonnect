@@ -161,4 +161,14 @@ function initSocket(){
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(DashboardWrapper)); 
+root.render(React.createElement(DashboardWrapper));
+
+// Front-end version
+const FRONT_VERSION = '1.0.2';
+function setHeaderInfo(){
+  const el=document.getElementById('info');
+  if(!el) return;
+  const now=new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'});
+  el.textContent=`v${FRONT_VERSION} | ${now}`;
+}
+setHeaderInfo(); 
