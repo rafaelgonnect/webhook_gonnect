@@ -40,6 +40,7 @@ RUN git clone --depth 1 https://github.com/minimal-ui-kit/material-kit-react.git
     && cd frontend \
     # Copiar páginas customizadas
     && cp -f /app/scripts/dashboard-pages/*.js src/pages/ \
+    && cp -f /app/scripts/dashboard-pages/main.js src/main.js \
     && npm ci --legacy-peer-deps \
     && npm run build \
     && mkdir -p /app/public/dashboard \
