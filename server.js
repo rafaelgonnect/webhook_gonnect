@@ -89,7 +89,8 @@ app.get('/', (req, res) => {
       swagger: 'GET /swagger.json',
       messages: `GET /messages`,
       stats: 'GET /stats',
-      tags: 'GET /tags'
+      tags: 'GET /tags',
+      dashboard: 'GET /dashboard'
     }
   });
 });
@@ -270,6 +271,7 @@ async function startServer() {
     console.log(`   • Messages:  ${BASE_URL}/messages`);
     console.log(`   • Stats:      ${BASE_URL}/stats`);
     console.log(`   • Tags:       ${BASE_URL}/tags`);
+    console.log(`   • Dashboard:  ${BASE_URL}/dashboard`);
     
     // Garantir admin
     await ensureAdminExists();
