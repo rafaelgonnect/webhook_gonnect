@@ -379,13 +379,17 @@ class WebhookProcessor {
     try {
       const content = payload.mensagem || payload.lastmessage || 'Conversa iniciada';
       
+      const td = payload.ticketdata || payload.ticketData || Object.values(payload).find((v, i) => Object.keys(payload)[i].toLowerCase() === 'ticketdata');
+      const companyId = payload.companyId || payload.companyid || td?.companyId || td?.companyid || ticket.companyId;
+      const whatsappId = payload.whatsappId || payload.whatsappid || payload.defaultWhatsapp_x || td?.whatsappId || td?.whatsappid || ticket.whatsappId;
+      
       const message = new Message({
         sender: payload.sender,
         ticketId: payload.chamadoid || ticket.whaticketId,
         action: action,
         content: content,
-        companyId: payload.companyid,
-        whatsappId: payload.defaultwhatsappid || payload.whatsappId,
+        companyId: companyId,
+        whatsappId: whatsappId,
         fromMe: payload.fromme === true,
         queueId: payload.queueid,
         isGroup: payload.isgroup === true,
