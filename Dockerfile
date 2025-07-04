@@ -1,7 +1,8 @@
+# Dockerfile simplificado para dashboard técnico puro
 FROM node:18-alpine
 
 # Instalar dependências do sistema
-RUN apk add --no-cache curl git
+RUN apk add --no-cache curl
 
 # Criar usuário não-root para segurança
 RUN addgroup -g 1001 -S nodejs
@@ -33,17 +34,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
 # Comando de inicialização
-CMD ["npm", "start"]
-
-# Clonar e buildar dashboard
-RUN git clone --depth 1 https://github.com/minimal-ui-kit/material-kit-react.git frontend \
-    && cd frontend \
-    # Copiar páginas customizadas
-    && cp -f /app/scripts/dashboard-pages/*.js src/pages/ \
-    && cp -f /app/scripts/dashboard-pages/main.js src/main.js \
-    && npm ci --legacy-peer-deps \
-    && npm run build \
-    && mkdir -p /app/public/dashboard \
-    && cp -r dist/. /app/public/dashboard/ \
-    && cd .. \
-    && rm -rf frontend 
+CMD ["npm", "start"] 
