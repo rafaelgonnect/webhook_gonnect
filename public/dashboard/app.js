@@ -82,6 +82,13 @@ function Dashboard() {
 
   useEffect(()=>{if(metrics&&tags){const ctx3=document.getElementById('chartTags');const labels=tags.map(t=>t.name);const dataVals=tags.map(t=>t.crmData?.usage?.totalApplications||0);new Chart(ctx3,{type:'pie',data:{labels,datasets:[{data:dataVals,backgroundColor:'#34d399'}]}});}},[tags,metrics]);
 
+  useEffect(()=>{
+    if(typeof io!=='undefined'){
+      const s = io();
+      s.on('metrics', data=> setMetrics(data));
+    }
+  },[]);
+
   if (error) return React.createElement('div', null, 'Erro: ' + error);
   if (!metrics||!health||!tags) return React.createElement('div',null,'Carregando...');
 
@@ -108,6 +115,15 @@ function DashboardWrapper(){
   },[authed]);
   if(!authed){return React.createElement(Login,{onLogin:()=>setA(true)});} 
   return React.createElement(Dashboard);
+}
+
+// socket live
+let socket=null;
+function initSocket(){
+  socket = io();
+  socket.on('metrics', m=>{
+    setMetrics(m);
+  });
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

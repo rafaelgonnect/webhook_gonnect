@@ -20,6 +20,8 @@ const bcrypt = require('bcryptjs');
 const path = require('path');
 const dashboardApiRoutes = require('./routes/dashboardApi');
 const authJwt = require('./middleware/auth');
+const http = require('http');
+const { initRealtime } = require('./services/realtime');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -284,7 +286,9 @@ async function startServer() {
     // Garantir admin
     await ensureAdminExists();
 
-    app.listen(PORT, () => {
+    const server = http.createServer(app);
+    initRealtime(server);
+    server.listen(PORT, () => {
       console.log(`🌐 Servidor rodando na porta ${PORT}`);
       console.log(`🎯 Webhook: http://localhost:${PORT}/webhook`);
       runDiagnostics();
