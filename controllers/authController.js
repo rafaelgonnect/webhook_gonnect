@@ -55,4 +55,26 @@ exports.login = async (req, res) => {
   }
 };
 
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     tags: [Autenticação]
+ *     summary: Retorna dados do usuário autenticado
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dados do usuário
+ */
+exports.me = async (req, res) => {
+  try {
+    const user = await AdminUser.findById(req.user.sub).select('-passwordHash');
+    if (!user) return res.status(404).json({ success: false, error: 'Usuário não encontrado' });
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erro interno' });
+  }
+};
+
 module.exports = exports; 
