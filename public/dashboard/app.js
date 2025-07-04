@@ -4,6 +4,28 @@ function ChartCanvas({ id }) {
   return React.createElement('canvas', { id, style: { maxWidth: '600px', marginBottom: '30px' } });
 }
 
+function Login({onLogin}){
+  const [username,setU]=useState('');
+  const [password,setP]=useState('');
+  const [error,setE]=useState(null);
+  const handle=()=>{
+    axios.post('/auth/login',{username,password}).then(r=>{
+      localStorage.setItem('token',r.data.token);
+      axios.defaults.headers.common['Authorization']='Bearer '+r.data.token;
+      onLogin();
+    }).catch(err=>setE('Credenciais inválidas'));
+  };
+  return React.createElement('div',{id:'loginBox'},[
+    React.createElement('h3',{key:'h'} ,'Login Admin'),
+    error?React.createElement('div',{style:{color:'red'}},error):null,
+    React.createElement('label',{key:'l1'},'Usuário'),
+    React.createElement('input',{key:'i1',value:username,onChange:e=>setU(e.target.value)}),
+    React.createElement('label',{key:'l2'},'Senha'),
+    React.createElement('input',{key:'i2',type:'password',value:password,onChange:e=>setP(e.target.value)}),
+    React.createElement('button',{key:'b',onClick:handle},'Entrar')
+  ]);
+}
+
 function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [error, setError] = useState(null);
@@ -55,5 +77,14 @@ function Dashboard() {
   ]);
 }
 
+function DashboardWrapper(){
+  const [authed,setA]=useState(!!localStorage.getItem('token'));
+  useEffect(()=>{
+    if(authed){axios.defaults.headers.common['Authorization']='Bearer '+localStorage.getItem('token');}
+  },[authed]);
+  if(!authed){return React.createElement(Login,{onLogin:()=>setA(true)});} 
+  return React.createElement(Dashboard);
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(Dashboard)); 
+root.render(React.createElement(DashboardWrapper)); 
