@@ -220,6 +220,14 @@ async function startServer() {
     const { logger } = require('./utils/logger');
     await logger.ensureLogDirectory();
     
+    const BASE_URL = process.env.EXTERNAL_BASE_URL || `http://localhost:${PORT}`;
+    console.log('🔗 Endpoints principais:');
+    console.log(`   • Swagger:    ${BASE_URL}/api-docs`);
+    console.log(`   • Health:     ${BASE_URL}/health`);
+    console.log(`   • Webhook:    ${BASE_URL}/webhook`);
+    console.log(`   • Contacts:   ${BASE_URL}/contacts`);
+    console.log(`   • Tickets:    ${BASE_URL}/tickets`);
+    
     app.listen(PORT, () => {
       console.log(`🌐 Servidor rodando na porta ${PORT}`);
       console.log(`🎯 Webhook: http://localhost:${PORT}/webhook`);
