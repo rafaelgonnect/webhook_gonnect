@@ -18,6 +18,7 @@ const authRoutes = require('./routes/auth');
 const AdminUser = require('./models/AdminUser');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const dashboardApiRoutes = require('./routes/dashboardApi');
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -107,6 +108,7 @@ app.use('/dashboard', express.static(path.join(__dirname,'public','dashboard')))
 app.get('/dashboard', (req,res)=>{
   res.sendFile(path.join(__dirname,'public','dashboard','index.html'));
 });
+app.use('/dashboard-api', dashboardApiRoutes);
 
 /**
  * @swagger
