@@ -119,14 +119,22 @@ function Dashboard() {
   if (!metrics||!health||!tags) return React.createElement('div',null,'Carregando...');
 
   return React.createElement('div', null, [
-    React.createElement('h3', { key: 'h' }, 'Tickets por Status'),
-    React.createElement(ChartCanvas, { key:'c1', id:'chartStatus' }),
-    React.createElement('h3', { key:'h2' }, 'Tickets últimos 7 dias'),
-    React.createElement(ChartCanvas, { key:'c2', id:'chartTicketsDay' }),
-    React.createElement('h3',{key:'hHealth'},'Saúde do Sistema'),
-    React.createElement('pre',{key:'pHealth'},JSON.stringify(health,null,2)),
-    React.createElement('h3',{key:'hTags'},'Distribuição de Tags'),
-    React.createElement(ChartCanvas,{key:'cTags',id:'chartTags'})
+    React.createElement('div',{key:'box1',className:'chart-box'},[
+      React.createElement('h3',{key:'h1'},'Tickets por Status'),
+      React.createElement(ChartCanvas,{key:'c1',id:'chartStatus'})
+    ]),
+    React.createElement('div',{key:'box2',className:'chart-box'},[
+      React.createElement('h3',{key:'h2'},'Tickets últimos 7 dias'),
+      React.createElement(ChartCanvas,{key:'c2',id:'chartTicketsDay'})
+    ]),
+    React.createElement('div',{key:'box3',className:'chart-box'},[
+      React.createElement('h3',{key:'h3'},'Saúde do Sistema'),
+      React.createElement('pre',{key:'pHealth'},JSON.stringify(health,null,2))
+    ]),
+    React.createElement('div',{key:'box4',className:'chart-box'},[
+      React.createElement('h3',{key:'h4'},'Distribuição de Tags'),
+      React.createElement(ChartCanvas,{key:'cTags',id:'chartTags'})
+    ])
   ]);
 }
 
