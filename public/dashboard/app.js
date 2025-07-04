@@ -39,6 +39,10 @@ function Dashboard() {
   const [health,setHealth]=useState(null);
   const [tags,setTags]=useState(null);
 
+  const statusChartRef = React.useRef(null);
+  const ticketsDayRef = React.useRef(null);
+  const tagsChartRef = React.useRef(null);
+
   useEffect(() => {
     axios.get('/dashboard-api/metrics')
       .then(res => setMetrics(res.data.data))
@@ -52,35 +56,57 @@ function Dashboard() {
 
   useEffect(() => {
     if (metrics) {
-      // doughnut tickets status
-      const ctx1 = document.getElementById('chartStatus');
-      new Chart(ctx1, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(metrics.ticketsStatus),
-          datasets: [{
-            data: Object.values(metrics.ticketsStatus),
-            backgroundColor: ['#facc15','#60a5fa','#34d399']
-          }]
-        },
-        options: { plugins:{legend:{position:'bottom'}} }
-      });
-
-      // line tickets per day
-      const ctx2 = document.getElementById('chartTicketsDay');
-      const labels = metrics.ticketsPerDay.map(i => i._id);
-      const dataVals = metrics.ticketsPerDay.map(i => i.total);
-      new Chart(ctx2, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{ label:'Tickets/dia', data: dataVals, borderColor:'#60a5fa', fill:false }]
+      const canvas = document.getElementById('chartStatus');
+      if (canvas) {
+        if (statusChartRef.current) {
+          statusChartRef.current.destroy();
         }
-      });
+        statusChartRef.current = new Chart(canvas, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(metrics.ticketsStatus),
+            datasets: [{
+              data: Object.values(metrics.ticketsStatus),
+              backgroundColor: ['#facc15','#60a5fa','#34d399']
+            }]
+          },
+          options: { plugins:{legend:{position:'bottom'}} }
+        });
+      }
+
+      const cv2 = document.getElementById('chartTicketsDay');
+      if (cv2) {
+        if (ticketsDayRef.current) {
+          ticketsDayRef.current.destroy();
+        }
+        ticketsDayRef.current = new Chart(cv2, {
+          type: 'line',
+          data: {
+            labels: metrics.ticketsPerDay.map(i => i._id),
+            datasets: [{ label:'Tickets/dia', data: metrics.ticketsPerDay.map(i => i.total), borderColor:'#60a5fa', fill:false }]
+          }
+        });
+      }
     }
   }, [metrics]);
 
-  useEffect(()=>{if(metrics&&tags){const ctx3=document.getElementById('chartTags');const labels=tags.map(t=>t.name);const dataVals=tags.map(t=>t.crmData?.usage?.totalApplications||0);new Chart(ctx3,{type:'pie',data:{labels,datasets:[{data:dataVals,backgroundColor:'#34d399'}]}});}},[tags,metrics]);
+  useEffect(() => {
+    if (metrics && tags && tags.length) {
+      const ct = document.getElementById('chartTags');
+      if (ct) {
+        if (tagsChartRef.current) {
+          tagsChartRef.current.destroy();
+        }
+        tagsChartRef.current = new Chart(ct, {
+          type: 'pie',
+          data: {
+            labels: tags.map(t => t.name),
+            datasets: [{ data: tags.map(t => t.crmData?.usage?.totalApplications||0) }]
+          }
+        });
+      }
+    }
+  }, [tags, metrics]);
 
   useEffect(()=>{
     if(typeof io!=='undefined'){
