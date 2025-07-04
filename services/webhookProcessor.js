@@ -227,13 +227,36 @@ class WebhookProcessor {
    */
   async upsertContact(payload) {
     try {
+      console.log('🔍 Debugando estrutura do payload:');
+      console.log('- payload.ticketdata existe?', !!payload.ticketdata);
+      console.log('- payload.ticketData existe?', !!payload.ticketData);
+      
+      if (payload.ticketdata) {
+        console.log('- payload.ticketdata.contact existe?', !!payload.ticketdata.contact);
+        console.log('- Keys em ticketdata:', Object.keys(payload.ticketdata));
+      }
+      
+      if (payload.ticketData) {
+        console.log('- payload.ticketData.contact existe?', !!payload.ticketData.contact);
+        console.log('- Keys em ticketData:', Object.keys(payload.ticketData));
+      }
+      
+      console.log('- payload.contact existe?', !!payload.contact);
+
       let contactData;
       
+      // Verificar tanto ticketdata quanto ticketData (case sensitivity)
       if (payload.ticketdata && payload.ticketdata.contact) {
         contactData = payload.ticketdata.contact;
+        console.log('✅ Usando payload.ticketdata.contact');
+      } else if (payload.ticketData && payload.ticketData.contact) {
+        contactData = payload.ticketData.contact;
+        console.log('✅ Usando payload.ticketData.contact');
       } else if (payload.contact) {
         contactData = payload.contact;
+        console.log('✅ Usando payload.contact');
       } else {
+        console.log('❌ Nenhum campo de contato encontrado');
         throw new Error('Dados de contato não encontrados no payload');
       }
 
