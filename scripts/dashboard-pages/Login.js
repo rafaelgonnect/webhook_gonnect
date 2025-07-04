@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import React, { useState } from 'react';
 
 export default function Login({ onLogin }) {
   const [user, setUser] = useState('');
@@ -11,7 +11,7 @@ export default function Login({ onLogin }) {
       .then(res => {
         localStorage.setItem('token', res.data.token);
         setError('');
-        onLogin && onLogin();
+        if (onLogin) onLogin();
       })
       .catch(() => setError('Login inválido!'));
   }
