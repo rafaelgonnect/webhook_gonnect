@@ -297,7 +297,17 @@ class WebhookProcessor {
    */
   async upsertTicket(payload, contact) {
     try {
-      const ticketData = payload.ticketdata || payload.ticketData;
+      let ticketData = payload.ticketdata || payload.ticketData;
+      if (!ticketData) {
+        // Busca case-insensitive por ticketData
+        for (const key of Object.keys(payload)) {
+          if (key.toLowerCase() === 'ticketdata') {
+            ticketData = payload[key];
+            console.log(`⚠️ Usando ticketData com chave '${key}' encontrada no payload`);
+            break;
+          }
+        }
+      }
       
       if (!ticketData) {
         throw new Error('Dados de ticket não encontrados no payload');
@@ -395,11 +405,14 @@ class WebhookProcessor {
    */
   async createFileMessage(payload, ticket) {
     try {
+      const td = payload.ticketdata || payload.ticketData || Object.values(payload).find((v, i) => Object.keys(payload)[i].toLowerCase() === 'ticketdata');
+      const content = (td?.lastmessage || 'Arquivo enviado');
+      
       const message = new Message({
         sender: payload.sender,
         ticketId: payload.chamadoid || ticket.whaticketId,
         action: 'media',
-        content: (payload.ticketdata?.lastmessage || payload.ticketData?.lastmessage || 'Arquivo enviado'),
+        content: content,
         companyId: payload.companyid,
         whatsappId: payload.defaultwhatsappid,
         fromMe: payload.fromme === true,
