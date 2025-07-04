@@ -290,6 +290,17 @@ class WebhookProcessor {
   }
 
   /**
+   * Função utilitária para parsear data com fallback
+   * @param {string} value - Valor da data
+   * @returns {Date|undefined} Data parseada ou undefined se inválida
+   */
+  parseDate(value) {
+    if (!value) return undefined;
+    const d = new Date(value);
+    return isNaN(d) ? undefined : d;
+  }
+
+  /**
    * Cria ou atualiza ticket
    * @param {Object} payload - Payload do webhook
    * @param {Object} contact - Documento do contato
@@ -299,7 +310,6 @@ class WebhookProcessor {
     try {
       let ticketData = payload.ticketdata || payload.ticketData;
       if (!ticketData) {
-        // Busca case-insensitive por ticketData
         for (const key of Object.keys(payload)) {
           if (key.toLowerCase() === 'ticketdata') {
             ticketData = payload[key];
@@ -313,32 +323,38 @@ class WebhookProcessor {
         throw new Error('Dados de ticket não encontrados no payload');
       }
 
+      const createdAt = this.parseDate(ticketData.createdAt || ticketData.createdat || ticketData.created_at);
+      const updatedAt = this.parseDate(ticketData.updatedAt || ticketData.updatedat || ticketData.updated_at);
+
+      const updateObj = {
+        whaticketId: ticketData.id,
+        uuid: ticketData.uuid,
+        status: ticketData.status,
+        unreadMessages: ticketData.unreadMessages || ticketData.unreadmessages || 0,
+        lastMessage: ticketData.lastMessage || ticketData.lastmessage,
+        isGroup: ticketData.isGroup === true || ticketData.isgroup === true,
+        contactId: ticketData.contactId || ticketData.contactid,
+        userId: ticketData.userId || ticketData.userid,
+        whatsappId: ticketData.whatsappId || ticketData.whatsappid,
+        queueId: ticketData.queueId || ticketData.queueid,
+        queueOptionId: ticketData.queueOptionId || ticketData.queueoptionid,
+        companyId: ticketData.companyId || ticketData.companyid,
+        chatbot: ticketData.chatbot === true,
+        channel: ticketData.channel || 'whatsapp',
+        queue: ticketData.queue,
+        user: ticketData.user,
+        whatsapp: ticketData.whatsapp,
+        company: ticketData.company
+      };
+
+      if (createdAt) updateObj.whaticketCreatedAt = createdAt;
+      if (updatedAt) updateObj.whaticketUpdatedAt = updatedAt;
+
       const ticket = await Ticket.findOneAndUpdate(
         { whaticketId: ticketData.id },
+        updateObj,
         {
-          whaticketId: ticketData.id,
-          uuid: ticketData.uuid,
-          status: ticketData.status,
-          unreadMessages: ticketData.unreadmessages || 0,
-          lastMessage: ticketData.lastmessage,
-          isGroup: ticketData.isgroup === true,
-          contactId: ticketData.contactid,
-          userId: ticketData.userid,
-          whatsappId: ticketData.whatsappid,
-          queueId: ticketData.queueid,
-          queueOptionId: ticketData.queueoptionid,
-          companyId: ticketData.companyid,
-          chatbot: ticketData.chatbot === true,
-          channel: ticketData.channel || 'whatsapp',
-          queue: ticketData.queue,
-          user: ticketData.user,
-          whatsapp: ticketData.whatsapp,
-          company: ticketData.company,
-          whaticketCreatedAt: new Date(ticketData.createdat),
-          whaticketUpdatedAt: new Date(ticketData.updatedat)
-        },
-        { 
-          upsert: true, 
+          upsert: true,
           new: true,
           setDefaultsOnInsert: true
         }
