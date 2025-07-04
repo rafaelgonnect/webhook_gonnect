@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Técnico - Gonnect CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #181c20; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 40px auto; background: #23272b; border-radius: 12px; box-shadow: 0 2px 8px #0008; padding: 32px; }
+    h1 { color: #00e676; }
+    .section { margin-bottom: 32px; }
+    .label { color: #aaa; font-size: 0.95em; }
+    .webhook-url { background: #222; color: #0ff; padding: 8px 12px; border-radius: 6px; font-size: 1.1em; word-break: break-all; }
+    button { background: #00e676; color: #222; border: none; border-radius: 6px; padding: 8px 16px; font-weight: bold; cursor: pointer; margin-left: 8px; }
+    pre { background: #111; color: #fff; padding: 12px; border-radius: 6px; overflow-x: auto; }
+    .ok { color: #00e676; }
+    .fail { color: #ff5252; }
+    .footer { text-align: center; color: #888; margin-top: 32px; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard Técnico</h1>
+    <div class="section">
+      <div class="label">URL do Webhook para colar na Gonnect:</div>
+      <span class="webhook-url" id="webhook-url"></span>
+      <button onclick="copyWebhook()">Copiar</button>
+    </div>
+    <div class="section">
+      <div class="label">Status do Sistema:</div>
+      <div id="status"></div>
+      <pre id="health"></pre>
+    </div>
+    <div class="section">
+      <div class="label">Versão da API:</div>
+      <span id="version"></span>
+    </div>
+  </div>
+  <div class="footer">
+    Gonnect CRM &mdash; <span id="now"></span>
+  </div>
+  <script>
+    // Monta a URL do webhook
+    const webhookUrl = `${window.location.origin.replace(/\/dashboard.*/, '')}/webhook`;
+    document.getElementById('webhook-url').textContent = webhookUrl;
+    function copyWebhook() {
+      navigator.clipboard.writeText(webhookUrl);
+      alert('URL copiada!');
+    }
+    // Mostra data/hora
+    document.getElementById('now').textContent = new Date().toLocaleString();
+    // Busca status do sistema
+    fetch('/health').then(r=>r.json()).then(data => {
+      document.getElementById('status').innerHTML = data.status === 'ok' ? '<b class="ok">OK</b>' : '<b class="fail">ERRO</b>';
+      document.getElementById('health').textContent = JSON.stringify(data, null, 2);
+    }).catch(() => {
+      document.getElementById('status').innerHTML = '<b class="fail">OFFLINE</b>';
+      document.getElementById('health').textContent = 'Não foi possível obter status.';
+    });
+    // Busca versão da API
+    fetch('/health').then(r=>r.json()).then(data => {
+      document.getElementById('version').textContent = data.version || 'indisponível';
+    });
+  </script>
+</body>
+</html> 
