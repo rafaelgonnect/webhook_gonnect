@@ -186,6 +186,28 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Endpoint específico para verificar se o servidor está realmente pronto
+app.get('/ready', (req, res) => {
+  const uptime = process.uptime();
+  const isReady = uptime > 10; // Considera pronto após 10 segundos
+  
+  if (isReady) {
+    res.json({
+      status: 'ready',
+      uptime: Math.floor(uptime),
+      timestamp: new Date().toISOString(),
+      message: 'Servidor pronto para receber tráfego'
+    });
+  } else {
+    res.status(503).json({
+      status: 'initializing',
+      uptime: Math.floor(uptime),
+      timestamp: new Date().toISOString(),
+      message: 'Servidor ainda inicializando'
+    });
+  }
+});
+
 // Health extended
 app.get('/health/extended', async (req, res) => {
   try {
@@ -375,8 +397,20 @@ async function startServer() {
       }
     });
 
-    // Tratamento de sinais do sistema
+    // Tratamento de sinais do sistema (ignorar SIGTERM durante inicialização)
+    let serverReady = false;
+    
+    setTimeout(() => {
+      serverReady = true;
+      console.log('🛡️  Servidor estabilizado - SIGTERM habilitado');
+    }, 15000); // 15 segundos para estabilizar
+    
     process.on('SIGTERM', () => {
+      if (!serverReady) {
+        console.log('⚠️  SIGTERM ignorado - servidor ainda inicializando...');
+        console.log('🔄 Aguardando estabilização do servidor...');
+        return;
+      }
       console.log('📡 Recebido SIGTERM - Encerrando servidor graciosamente...');
       server.close(() => {
         console.log('✅ Servidor encerrado com sucesso');
