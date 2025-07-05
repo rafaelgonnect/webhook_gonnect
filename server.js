@@ -401,6 +401,47 @@ async function startServer() {
       // Executar diagnósticos
       runDiagnostics();
     });
+
+    // Tratamento de erros do servidor
+    server.on('error', (error) => {
+      console.error('❌ Erro no servidor HTTP:', error);
+      if (error.code === 'EADDRINUSE') {
+        console.error('❌ Porta já está em uso. Tente outra porta.');
+        process.exit(1);
+      }
+    });
+
+    // Tratamento de sinais do sistema
+    process.on('SIGTERM', () => {
+      console.log('📡 Recebido SIGTERM - Encerrando servidor graciosamente...');
+      server.close(() => {
+        console.log('✅ Servidor encerrado com sucesso');
+        process.exit(0);
+      });
+    });
+
+    process.on('SIGINT', () => {
+      console.log('📡 Recebido SIGINT - Encerrando servidor graciosamente...');
+      server.close(() => {
+        console.log('✅ Servidor encerrado com sucesso');
+        process.exit(0);
+      });
+    });
+
+    // Tratamento de erros não capturados
+    process.on('uncaughtException', (error) => {
+      console.error('❌ Erro não capturado:', error);
+      console.error('Stack:', error.stack);
+      // Não encerrar o processo imediatamente
+      console.log('⚠️  Continuando execução...');
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('❌ Promise rejeitada não tratada:', reason);
+      console.error('Promise:', promise);
+      // Não encerrar o processo imediatamente
+      console.log('⚠️  Continuando execução...');
+    });
     
     // Configurar rotação de logs
     console.log('📋 Configurando rotação de logs...');

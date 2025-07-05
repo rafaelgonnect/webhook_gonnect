@@ -1,11 +1,20 @@
 const axios = require('axios');
 
-const BASE_URL = process.env.WHATICKET_BACKEND_URL;
-const TOKEN = process.env.WHATICKET_TOKEN;
-
-if (!BASE_URL || !TOKEN) {
-  console.warn('⚠️ WHATICKET_BACKEND_URL ou WHATICKET_TOKEN não configurados - envio externo desabilitado');
+// Função para verificar configuração do Whaticket
+function checkWhaticketConfig() {
+  const BASE_URL = process.env.WHATICKET_BACKEND_URL;
+  const TOKEN = process.env.WHATICKET_TOKEN;
+  
+  if (!BASE_URL || !TOKEN) {
+    console.warn('⚠️ WHATICKET_BACKEND_URL ou WHATICKET_TOKEN não configurados - envio externo desabilitado');
+    return { BASE_URL: null, TOKEN: null, enabled: false };
+  }
+  
+  return { BASE_URL, TOKEN, enabled: true };
 }
+
+// Configuração inicial
+const config = checkWhaticketConfig();
 
 /**
  * Enviar mensagem de texto padrão (abre ou não ticket)
@@ -17,10 +26,10 @@ if (!BASE_URL || !TOKEN) {
  * @returns {Promise<Object>} resposta da API Whaticket
  */
 async function sendText({ number, body, openTicket = 0, queueId = 0 }) {
-  if (!BASE_URL || !TOKEN) return { disabled: true };
+  if (!config.enabled) return { disabled: true };
   try {
     const resp = await axios.post(
-      `${BASE_URL}/api/messages/send`,
+      `${config.BASE_URL}/api/messages/send`,
       {
         number,
         body,
@@ -29,7 +38,7 @@ async function sendText({ number, body, openTicket = 0, queueId = 0 }) {
       },
       {
         headers: {
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${config.TOKEN}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
@@ -46,14 +55,14 @@ async function sendText({ number, body, openTicket = 0, queueId = 0 }) {
  * Enviar texto simples (endpoint sendsimple)
  */
 async function sendTextSimple({ number, body, cc = '55' }) {
-  if (!BASE_URL || !TOKEN) return { disabled: true };
+  if (!config.enabled) return { disabled: true };
   try {
     const resp = await axios.post(
-      `${BASE_URL}/api/messages/sendsimple?cc=${cc}`,
+      `${config.BASE_URL}/api/messages/sendsimple?cc=${cc}`,
       { number, body },
       {
         headers: {
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${config.TOKEN}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
@@ -67,14 +76,14 @@ async function sendTextSimple({ number, body, cc = '55' }) {
 }
 
 async function sendMedia({ number, fileUrl, filename, caption = '', openTicket = 0, queueId = 0 }) {
-  if (!BASE_URL || !TOKEN) return { disabled: true };
+  if (!config.enabled) return { disabled: true };
   try {
     const resp = await axios.post(
-      `${BASE_URL}/api/messages/send-media`,
+      `${config.BASE_URL}/api/messages/send-media`,
       { number, fileUrl, filename, caption, openticket: openTicket, queueid: queueId },
       {
         headers: {
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${config.TOKEN}`,
           'Content-Type': 'application/json'
         },
         timeout: 20000
