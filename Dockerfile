@@ -1,12 +1,8 @@
-# Dockerfile simplificado para dashboard técnico puro
+# Dockerfile otimizado para startup rápido
 FROM node:18-alpine
 
 # Instalar dependências do sistema
 RUN apk add --no-cache curl
-
-# Criar usuário não-root para segurança
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
 
 # Definir diretório de trabalho
 WORKDIR /app
@@ -20,11 +16,8 @@ RUN npm ci --only=production && npm cache clean --force
 # Copiar código da aplicação
 COPY . .
 
-# Criar diretório de logs e definir permissões
-RUN mkdir -p Logs && chown -R nodejs:nodejs /app
-
-# Mudar para usuário não-root
-USER nodejs
+# Criar diretório de logs
+RUN mkdir -p Logs
 
 # Expor porta
 EXPOSE 3000
@@ -33,8 +26,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
-# Tornar script executável
-RUN chmod +x scripts/start.sh
-
-# Comando de inicialização usando script robusto
-CMD ["./scripts/start.sh"] 
+# Comando de inicialização direto e rápido
+CMD ["node", "server.js"] 

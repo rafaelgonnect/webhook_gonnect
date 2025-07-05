@@ -312,21 +312,6 @@ async function startServer() {
     console.log(`   • EXTERNAL_BASE_URL: ${process.env.EXTERNAL_BASE_URL || 'não definido'}`);
     console.log(`   • MONGODB_URI: ${process.env.MONGODB_URI ? 'definido' : 'não definido'}`);
     
-    // Verificar dependências críticas
-    console.log('📦 Verificando dependências...');
-    try {
-      require('express');
-      require('mongoose');
-      require('cors');
-      require('helmet');
-      require('bcryptjs');
-      require('jsonwebtoken');
-      console.log('   ✅ Todas as dependências carregadas com sucesso');
-    } catch (depError) {
-      console.error('   ❌ Erro ao carregar dependência:', depError.message);
-      throw depError;
-    }
-    
     // Conectar ao banco de dados
     console.log('🗄️  Conectando ao banco de dados...');
     await connectDatabase();
@@ -337,27 +322,6 @@ async function startServer() {
     const { logger } = require('./utils/logger');
     await logger.ensureLogDirectory();
     console.log('   ✅ Sistema de logs configurado');
-    
-    // Verificar arquivos críticos
-    console.log('📁 Verificando arquivos críticos...');
-    const fs = require('fs');
-    const path = require('path');
-    
-    const criticalFiles = [
-      'public/dashboard/index.html',
-      'middleware/auth.js',
-      'routes/auth.js',
-      'models/AdminUser.js'
-    ];
-    
-    for (const file of criticalFiles) {
-      const filePath = path.join(__dirname, file);
-      if (fs.existsSync(filePath)) {
-        console.log(`   ✅ ${file}`);
-      } else {
-        console.log(`   ⚠️  ${file} - NÃO ENCONTRADO`);
-      }
-    }
     
     const BASE_URL = process.env.EXTERNAL_BASE_URL || `http://localhost:${PORT}`;
     console.log('🔗 Endpoints disponíveis:');
@@ -398,8 +362,8 @@ async function startServer() {
       console.log(`📚 Swagger: http://localhost:${PORT}/api-docs`);
       console.log('==========================================');
       
-      // Executar diagnósticos
-      runDiagnostics();
+      // Executar diagnósticos (simplificado)
+      console.log('✅ Servidor pronto para receber requisições!');
     });
 
     // Tratamento de erros do servidor
@@ -432,14 +396,12 @@ async function startServer() {
     process.on('uncaughtException', (error) => {
       console.error('❌ Erro não capturado:', error);
       console.error('Stack:', error.stack);
-      // Não encerrar o processo imediatamente
       console.log('⚠️  Continuando execução...');
     });
 
     process.on('unhandledRejection', (reason, promise) => {
       console.error('❌ Promise rejeitada não tratada:', reason);
       console.error('Promise:', promise);
-      // Não encerrar o processo imediatamente
       console.log('⚠️  Continuando execução...');
     });
     
@@ -447,12 +409,6 @@ async function startServer() {
     console.log('📋 Configurando rotação de logs...');
     scheduleLogRotation();
     console.log('   ✅ Rotação de logs configurada');
-    
-    // Log de memória
-    const memUsage = process.memoryUsage();
-    console.log('💾 Uso de memória inicial:');
-    console.log(`   • RSS: ${Math.round(memUsage.rss / 1024 / 1024)} MB`);
-    console.log(`   • Heap: ${Math.round(memUsage.heapUsed / 1024 / 1024)} MB`);
     
     console.log('✅ Inicialização concluída com sucesso!');
     

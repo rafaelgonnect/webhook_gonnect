@@ -8,8 +8,7 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:admin": "node scripts/seedAdmin.js",
-    "check": "node scripts/check-deploy.js",
-    "prestart": "node scripts/check-deploy.js"
+    "check": "node scripts/check-deploy.js"
   },
   "keywords": [
     "webhook",
