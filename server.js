@@ -296,39 +296,132 @@ async function runDiagnostics() {
 
 async function startServer() {
   try {
-    console.log(`🛠️  Iniciando Webhook Gonnect CRM - Versão ${version}`);
-    console.log('📦 Build: inclui correções de ticketData case-insensitive e debug de payload');
-    await connectDatabase();
+    console.log('🚀 ==========================================');
+    console.log('🚀 INICIANDO WEBHOOK GONNECT CRM');
+    console.log('🚀 ==========================================');
+    console.log(`📦 Versão: ${version}`);
+    console.log(`🌍 Ambiente: ${NODE_ENV}`);
+    console.log(`🔧 Porta: ${PORT}`);
+    console.log(`📅 Data/Hora: ${new Date().toISOString()}`);
+    console.log('==========================================');
     
+    // Verificar variáveis de ambiente
+    console.log('🔍 Verificando variáveis de ambiente...');
+    console.log(`   • NODE_ENV: ${process.env.NODE_ENV || 'não definido'}`);
+    console.log(`   • PORT: ${process.env.PORT || 'não definido (usando 3000)'}`);
+    console.log(`   • EXTERNAL_BASE_URL: ${process.env.EXTERNAL_BASE_URL || 'não definido'}`);
+    console.log(`   • MONGODB_URI: ${process.env.MONGODB_URI ? 'definido' : 'não definido'}`);
+    
+    // Verificar dependências críticas
+    console.log('📦 Verificando dependências...');
+    try {
+      require('express');
+      require('mongoose');
+      require('cors');
+      require('helmet');
+      require('bcryptjs');
+      require('jsonwebtoken');
+      console.log('   ✅ Todas as dependências carregadas com sucesso');
+    } catch (depError) {
+      console.error('   ❌ Erro ao carregar dependência:', depError.message);
+      throw depError;
+    }
+    
+    // Conectar ao banco de dados
+    console.log('🗄️  Conectando ao banco de dados...');
+    await connectDatabase();
+    console.log('   ✅ Conexão com banco de dados estabelecida');
+    
+    // Configurar logger
+    console.log('📝 Configurando sistema de logs...');
     const { logger } = require('./utils/logger');
     await logger.ensureLogDirectory();
+    console.log('   ✅ Sistema de logs configurado');
+    
+    // Verificar arquivos críticos
+    console.log('📁 Verificando arquivos críticos...');
+    const fs = require('fs');
+    const path = require('path');
+    
+    const criticalFiles = [
+      'public/dashboard/index.html',
+      'middleware/auth.js',
+      'routes/auth.js',
+      'models/AdminUser.js'
+    ];
+    
+    for (const file of criticalFiles) {
+      const filePath = path.join(__dirname, file);
+      if (fs.existsSync(filePath)) {
+        console.log(`   ✅ ${file}`);
+      } else {
+        console.log(`   ⚠️  ${file} - NÃO ENCONTRADO`);
+      }
+    }
     
     const BASE_URL = process.env.EXTERNAL_BASE_URL || `http://localhost:${PORT}`;
-    console.log('🔗 Endpoints principais:');
+    console.log('🔗 Endpoints disponíveis:');
     console.log(`   • Swagger:    ${BASE_URL}/api-docs`);
     console.log(`   • Health:     ${BASE_URL}/health`);
     console.log(`   • Webhook:    ${BASE_URL}/webhook`);
+    console.log(`   • Auth:       ${BASE_URL}/auth/login`);
     console.log(`   • Contacts:   ${BASE_URL}/contacts`);
     console.log(`   • Tickets:    ${BASE_URL}/tickets`);
-    console.log(`   • Messages:  ${BASE_URL}/messages`);
+    console.log(`   • Messages:   ${BASE_URL}/messages`);
     console.log(`   • Stats:      ${BASE_URL}/stats`);
     console.log(`   • Tags:       ${BASE_URL}/tags`);
     console.log(`   • Dashboard:  ${BASE_URL}/dashboard`);
     
-    // Garantir admin
+    // Garantir usuário admin
+    console.log('👑 Verificando usuário administrador...');
     await ensureAdminExists();
-
+    console.log('   ✅ Usuário admin verificado/criado');
+    
+    // Criar servidor HTTP
+    console.log('🌐 Criando servidor HTTP...');
     const server = http.createServer(app);
+    
+    // Inicializar realtime
+    console.log('⚡ Inicializando sistema realtime...');
     initRealtime(server);
+    console.log('   ✅ Sistema realtime inicializado');
+    
+    // Iniciar servidor
+    console.log('🎯 Iniciando servidor na porta', PORT);
     server.listen(PORT, () => {
-      console.log(`🌐 Servidor rodando na porta ${PORT}`);
-      console.log(`🎯 Webhook: http://localhost:${PORT}/webhook`);
+      console.log('🎉 ==========================================');
+      console.log('🎉 SERVIDOR INICIADO COM SUCESSO!');
+      console.log('🎉 ==========================================');
+      console.log(`🌐 URL Local: http://localhost:${PORT}`);
+      console.log(`🔗 Webhook: http://localhost:${PORT}/webhook`);
+      console.log(`📊 Dashboard: http://localhost:${PORT}/dashboard`);
+      console.log(`📚 Swagger: http://localhost:${PORT}/api-docs`);
+      console.log('==========================================');
+      
+      // Executar diagnósticos
       runDiagnostics();
     });
-
+    
+    // Configurar rotação de logs
+    console.log('📋 Configurando rotação de logs...');
     scheduleLogRotation();
+    console.log('   ✅ Rotação de logs configurada');
+    
+    // Log de memória
+    const memUsage = process.memoryUsage();
+    console.log('💾 Uso de memória inicial:');
+    console.log(`   • RSS: ${Math.round(memUsage.rss / 1024 / 1024)} MB`);
+    console.log(`   • Heap: ${Math.round(memUsage.heapUsed / 1024 / 1024)} MB`);
+    
+    console.log('✅ Inicialização concluída com sucesso!');
+    
   } catch (error) {
-    console.error('❌ Erro ao iniciar servidor:', error);
+    console.error('❌ ==========================================');
+    console.error('❌ ERRO CRÍTICO NA INICIALIZAÇÃO');
+    console.error('❌ ==========================================');
+    console.error('Erro:', error.message);
+    console.error('Stack:', error.stack);
+    console.error('==========================================');
     process.exit(1);
   }
 }

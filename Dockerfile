@@ -33,5 +33,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
-# Comando de inicialização
-CMD ["npm", "start"] 
+# Comando de inicialização com verificação e logs detalhados
+CMD ["sh", "-c", "echo '🚀 Iniciando aplicação...' && echo '📦 Node.js:' $(node --version) && echo '🌍 NODE_ENV:' ${NODE_ENV:-production} && echo '🔧 PORT:' ${PORT:-3000} && npm run check && npm start"] 
