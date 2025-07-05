@@ -23,7 +23,7 @@ const authJwt = require('./middleware/auth');
 const http = require('http');
 const { initRealtime } = require('./services/realtime');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const app = express();

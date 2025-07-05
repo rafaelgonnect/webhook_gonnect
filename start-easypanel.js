@@ -3,7 +3,7 @@
 console.log('🚀 Iniciando servidor para EasyPanel...');
 console.log('📦 Node.js:', process.version);
 console.log('🌍 NODE_ENV:', process.env.NODE_ENV || 'production');
-console.log('🔧 PORT:', process.env.PORT || 3000);
+console.log('🔧 PORT:', process.env.PORT || 3003);
 
 // Ignorar SIGTERM nos primeiros 20 segundos
 let startTime = Date.now();
