@@ -26,7 +26,7 @@ RUN npm ci --only=production
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3003
 
 CMD ["npm", "start"]
 ```
@@ -39,16 +39,16 @@ services:
   webhook-gonnect:
     build: .
     ports:
-      - "3000:3000"
+      - "3003:3003"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=3003
       - MONGODB_URI=mongodb://mongo:L3afarodnil@109.199.117.251:27017/webhook_gonnect?tls=false&authSource=admin
     restart: unless-stopped
     volumes:
       - ./Logs:/app/Logs
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -73,7 +73,7 @@ server {
     server_name seu-dominio.com;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3003;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -91,21 +91,21 @@ server {
 ### 1. Configuração do Aplicativo
 - **Nome**: `webhook-gonnect-crm`
 - **Tipo**: Node.js
-- **Porta**: `3000`
+- **Porta**: `3003`
 - **Comando de inicialização**: `npm start`
 - **Diretório de trabalho**: `/app`
 
 ### 2. Variáveis de Ambiente
 ```env
 NODE_ENV=production
-PORT=3000
+PORT=3003
 MONGODB_URI=mongodb://mongo:L3afarodnil@109.199.117.251:27017/webhook_gonnect?tls=false&authSource=admin
 ```
 
 ### 3. Configurações de Rede
 - **Domínio**: `api.gonnect.com.br` (ou seu domínio)
 - **SSL**: Ativar certificado Let's Encrypt
-- **Proxy Reverso**: Configurar para porta 3000
+- **Proxy Reverso**: Configurar para porta 3003
 
 ## 📋 Checklist de Deploy
 
