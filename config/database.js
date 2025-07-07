@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  * Configurações de conexão com MongoDB
  */
 const MONGODB_CONFIG = {
-  URI: 'mongodb://mongo:L3afarodnil@109.199.117.251:27017/webhook_gonnect?tls=false&authSource=admin',
+  URI: process.env.MONGODB_URI,
   OPTIONS: {
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 10000,
