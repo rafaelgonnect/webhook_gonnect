@@ -1,43 +1,76 @@
 # Dependências
-node_modules
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Arquivos de desenvolvimento
-.git
-.gitignore
-README.md
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Arquivos de ambiente e configuração
+.env*
+!.env.example
 
-# Logs
-Logs/*
+# Arquivos de desenvolvimento
+.git/
+.gitignore
+.gitattributes
+
+# Logs (manter estrutura, excluir conteúdo)
+Logs/*.json
+Logs/**/*.json
 !Logs/.gitkeep
 
-# Documentação
+# Documentação (otimizado para EasyPanel)
+README.md
 documentacao.md
 deploy-easypanel.md
+DEPLOY*.md
+GUIA*.md
+ORIENTACAO*.md
+prompt_lovable.md
+RESUMO*.md
+easypanel-config.md
 
-# Arquivos temporários
+# Arquivos temporários e cache
 *.tmp
 *.temp
+*.cache
 .DS_Store
 Thumbs.db
 
-# IDEs
-.vscode
-.idea
+# IDEs e editores
+.vscode/
+.idea/
 *.swp
 *.swo
+*.sublime-*
 
-# Testes
-coverage
-.nyc_output
+# Testes e coverage
+test/
+__tests__/
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
 
-# Build
-dist
-build 
+# Build e artifacts
+dist/
+build/
+out/
+
+# Docker (evitar recursão)
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# Scripts de desenvolvimento
+scripts/dashboard-pages/
+scripts/check-deploy.js
+
+# Configurações específicas
+.nvmrc
+.yarnrc
+.npmrc
+
+# Arquivos de backup
+*.bak
+*.backup
+*~ 

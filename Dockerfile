@@ -1,30 +1,51 @@
-# Dockerfile otimizado para startup rápido
+# Dockerfile otimizado para EasyPanel
 FROM node:18-alpine
 
-# Instalar dependências do sistema
-RUN apk add --no-cache curl
+# Informações sobre a imagem
+LABEL maintainer="Webhook Gonnect CRM"
+LABEL description="Sistema webhook CRM para integração com Whaticket"
+LABEL version="1.5.0"
+
+# Instalar dependências do sistema necessárias
+RUN apk add --no-cache \
+    curl \
+    dumb-init \
+    && rm -rf /var/cache/apk/*
+
+# Criar usuário não-root para segurança
+RUN addgroup -g 1001 -S nodejs \
+    && adduser -S nextjs -u 1001
 
 # Definir diretório de trabalho
 WORKDIR /app
 
-# Copiar arquivos de dependências
+# Copiar arquivos de dependências primeiro (cache layer)
 COPY package*.json ./
 
-# Instalar dependências de produção
-RUN npm ci --only=production && npm cache clean --force
+# Instalar dependências de produção com otimizações
+RUN npm ci --only=production \
+    && npm cache clean --force \
+    && chown -R nextjs:nodejs /app
 
 # Copiar código da aplicação
-COPY . .
+COPY --chown=nextjs:nodejs . .
 
-# Criar diretório de logs
-RUN mkdir -p Logs
+# Criar diretório de logs com permissões corretas
+RUN mkdir -p Logs \
+    && chown -R nextjs:nodejs Logs
 
-# Expor porta
+# Mudar para usuário não-root
+USER nextjs
+
+# Expor porta 3003
 EXPOSE 3003
 
-# Health check para porta 3003
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
+# Health check otimizado para EasyPanel
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3003/health || exit 1
 
-# Comando de inicialização com proteção SIGTERM
+# Usar dumb-init para melhor signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Comando de inicialização otimizado para EasyPanel
 CMD ["node", "start-easypanel.js"] 

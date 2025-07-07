@@ -4,11 +4,22 @@
   "description": "Sistema webhook CRM para integração com Whaticket",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node start-easypanel.js",
+    "start:server": "node server.js",
+    "start:simple": "node server-simple.js",
     "dev": "nodemon server.js",
+    "dev:simple": "nodemon server-simple.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test:health": "curl -f http://localhost:3003/health || exit 1",
+    "test:ready": "curl -f http://localhost:3003/health/ready || exit 1",
     "seed:admin": "node scripts/seedAdmin.js",
-    "check": "node scripts/check-deploy.js"
+    "check": "node scripts/check-deploy.js",
+    "build": "echo \"Build completed - Node.js app ready\"",
+    "postinstall": "echo \"Dependencies installed successfully\"",
+    "deploy:check": "npm run check && npm run test:health",
+    "logs:clean": "node -e \"require('fs-extra').emptyDirSync('./Logs')\"",
+    "logs:view": "tail -f Logs/*.json",
+    "db:test": "node -e \"require('mongoose').connect(process.env.MONGODB_URI).then(() => console.log('DB OK')).catch(e => console.log('DB ERROR:', e.message))\""
   },
   "keywords": [
     "webhook",

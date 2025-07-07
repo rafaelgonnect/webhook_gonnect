@@ -19,6 +19,7 @@ const AdminUser = require('./models/AdminUser');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const dashboardApiRoutes = require('./routes/dashboardApi');
+const healthRoutes = require('./routes/health');
 const authJwt = require('./middleware/auth');
 const http = require('http');
 const { initRealtime } = require('./services/realtime');
@@ -113,6 +114,7 @@ app.use('/messages', authJwt, messagesRoutes);
 app.use('/stats', authJwt, statsRoutes);
 app.use('/tags', authJwt, tagsRoutes);
 app.use('/auth', authRoutes);
+app.use('/health', healthRoutes);
 app.use('/dashboard', express.static(path.join(__dirname,'public','dashboard')));
 app.get('/dashboard', (req,res)=>{
   res.sendFile(path.join(__dirname,'public','dashboard','index.html'));
