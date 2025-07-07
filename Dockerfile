@@ -1,51 +1,42 @@
-# Dockerfile otimizado para EasyPanel
-FROM node:18-alpine
+# Estágio 1: Build - Instala dependências
+FROM node:18-alpine AS builder
 
-# Informações sobre a imagem
-LABEL maintainer="Webhook Gonnect CRM"
-LABEL description="Sistema webhook CRM para integração com Whaticket"
-LABEL version="1.5.0"
-
-# Instalar dependências do sistema necessárias
-RUN apk add --no-cache \
-    curl \
-    dumb-init \
-    && rm -rf /var/cache/apk/*
-
-# Criar usuário não-root para segurança
-RUN addgroup -g 1001 -S nodejs \
-    && adduser -S nextjs -u 1001
-
-# Definir diretório de trabalho
 WORKDIR /app
 
-# Copiar arquivos de dependências primeiro (cache layer)
 COPY package*.json ./
 
-# Instalar dependências de produção com otimizações
-RUN npm ci --only=production \
-    && npm cache clean --force \
-    && chown -R nextjs:nodejs /app
+# Instala todas as dependências (incluindo devDependencies se necessário para algum build step)
+RUN npm ci
 
-# Copiar código da aplicação
-COPY --chown=nextjs:nodejs . .
+# ---
 
-# Criar diretório de logs com permissões corretas
-RUN mkdir -p Logs \
-    && chown -R nextjs:nodejs Logs
+# Estágio 2: Produção - Imagem final e enxuta
+FROM node:18-alpine
 
-# Mudar para usuário não-root
-USER nextjs
+WORKDIR /app
 
-# Expor porta 3003
+# Cria um usuário e grupo não-root para a aplicação
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Copia as dependências de produção do estágio de build
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copia todo o código da aplicação
+COPY . .
+
+# Define as permissões para o usuário da aplicação
+RUN chown -R appuser:appgroup /app
+
+# Muda para o usuário não-root
+USER appuser
+
+# Expõe a porta da aplicação
 EXPOSE 3003
 
-# Health check otimizado para EasyPanel
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:3003/health || exit 1
+# Healthcheck para o Easypanel
+# Verifica se o endpoint /health responde com sucesso
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3003/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
-# Usar dumb-init para melhor signal handling
-ENTRYPOINT ["dumb-init", "--"]
-
-# Comando de inicialização otimizado para EasyPanel
-CMD ["node", "start-easypanel.js"] 
+# Comando para iniciar a aplicação
+CMD [ "node", "server.js" ]

@@ -4,11 +4,8 @@
   "description": "Sistema webhook CRM para integração com Whaticket",
   "main": "server.js",
   "scripts": {
-    "start": "node start-easypanel.js",
-    "start:server": "node server.js",
-    "start:simple": "node server-simple.js",
-    "dev": "nodemon server.js",
-    "dev:simple": "nodemon server-simple.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:health": "curl -f http://localhost:3003/health || exit 1",
     "test:ready": "curl -f http://localhost:3003/health/ready || exit 1",
